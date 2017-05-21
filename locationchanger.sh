@@ -20,6 +20,10 @@ ts() {
     date +"[%Y-%m-%d %H:%M] $*"
 }
 
+notify() {
+	osascript -e "display notification \"$*\" with title $SCRIPT_NAME"
+}
+
 SSID=`/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | grep ' SSID' | cut -d : -f 2- | sed 's/^[ \t]*//'`
 
 LOCATION_NAMES=`scselect | tail -n +2 | cut -d \( -f 2- | sed 's/)$//'`
@@ -54,6 +58,7 @@ fi
 if [ "$NEW_LOCATION" != "" ]; then
     if [ "$NEW_LOCATION" != "$CURRENT_LOCATION" ]; then
         ts "Changing the location to '$NEW_LOCATION'"
+        notify("Changing the location to '$NEW_LOCATION'")
         scselect "$NEW_LOCATION"
         SCRIPT="$HOME/.locations/$NEW_LOCATION"
         if [ -f $SCRIPT ]; then
